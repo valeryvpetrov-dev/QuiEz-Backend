@@ -1,0 +1,1 @@
+web: gunicorn quiez.quiez.wsgi --log-file -
