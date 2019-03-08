@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import sys
+
+import django_heroku
 
 from decouple import config
 import dj_database_url
@@ -18,7 +21,6 @@ import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -27,9 +29,9 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = [".herokuapp.com"]
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,13 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.staticfiles',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-    'rest_framework_swagger',
-    'quiez.rest_api'
+    'quiez.rest_api',
+    'rest_framework_swagger'
 ]
 
 MIDDLEWARE = [
@@ -74,16 +76,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'quiez.quiez.wsgi.application'
+WSGI_APPLICATION = 'quiez.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': dj_database_url.config()
 }
 
 
@@ -123,10 +123,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
 
-# Configure Django App for Heroku.
-import django_heroku
-django_heroku.settings(locals())
-
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -151,3 +147,29 @@ SWAGGER_SETTINGS = {
         }
     },
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}
+
+# Configure Django App for Heroku.
+django_heroku.settings(locals())
