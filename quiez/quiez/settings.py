@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'quiez.rest_api',
-    'rest_framework_swagger'
 ]
 
 MIDDLEWARE = [
@@ -76,16 +75,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'quiez.wsgi.application'
+WSGI_APPLICATION = 'quiez.quiez.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/quiez-backend-rest-api')
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
