@@ -138,6 +138,3 @@ cmake-build-*/
 
 # database migrations
 **/migrations
-
-# json files for testing
-json
