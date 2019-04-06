@@ -4,7 +4,7 @@
   "questions": [
     {
       "description": "q1",
-      "type": 1,
+      "type": "one",
       "answers": [
         {
           "content": "a1-1",
@@ -22,7 +22,7 @@
     },
     {
       "description": "q2",
-      "type": 2,
+      "type": "many",
       "answers": [
         {
           "content": "a1-2",
@@ -40,7 +40,7 @@
     },
     {
       "description": "q3",
-      "type": 3,
+      "type": "text",
       "answers": [
         {
           "content": "a1-3",
