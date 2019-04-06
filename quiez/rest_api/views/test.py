@@ -4,19 +4,19 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from ..serializers.test import TestDetailedSerializer
+from ..serializers.test import TestPostSerializer
 
 
 class TestList(GenericAPIView):
     """
-    Test detail view class.
+    Test view class.
 
     post:
     Create test instance.
     """
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
-    serializer_class = TestDetailedSerializer
+    serializer_class = TestPostSerializer
 
     def post(self, request):
         """
@@ -25,7 +25,7 @@ class TestList(GenericAPIView):
         :param request: test creation initiator.
         :return: HTTP response with id of created test instance.
         """
-        serializer = TestDetailedSerializer(data=request.data)
+        serializer = TestPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data['owner'] = request.user
             test = serializer.create(validated_data=serializer.validated_data)
