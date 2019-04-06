@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from ..models.question import Question
-from .answer import QuestionAnswerPostSerializer
+from ..models.question import Question, QuestionFeedback
+from .answer import QuestionAnswerPostSerializer, QuestionAnswerGetSerializer, QuestionFeedbackAnswerGetSerializer
 
 
 class QuestionPostSerializer(serializers.ModelSerializer):
@@ -31,3 +31,29 @@ class QuestionPostSerializer(serializers.ModelSerializer):
                 serializer.validated_data['question'] = question
                 serializer.create(validated_data=serializer.validated_data)
         return question
+
+
+class QuestionGetSerializer(serializers.ModelSerializer):
+    """
+    Question instance serializer class.
+
+    * Only for read purposes.
+    """
+    answers = QuestionAnswerGetSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = ('id', 'description', 'type', 'answers')
+
+
+class QuestionFeedbackGetSerializer(serializers.ModelSerializer):
+    """
+    Feedback question instance serializer class.
+
+    * Only for read purposes.
+    """
+    answers = QuestionFeedbackAnswerGetSerializer(many=True)
+
+    class Meta:
+        model = QuestionFeedback
+        fields = ('id', 'description', 'type', 'answers')

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from ..models.test import Test
-from .question import QuestionPostSerializer
+from .question import QuestionPostSerializer, QuestionGetSerializer, QuestionFeedbackGetSerializer
+from .auth import UserSerializer
 
 
 class TestPostSerializer(serializers.ModelSerializer):
@@ -31,3 +32,18 @@ class TestPostSerializer(serializers.ModelSerializer):
                 serializer.validated_data['test'] = test
                 serializer.create(validated_data=serializer.validated_data)
         return test
+
+
+class TestGetSerializer(serializers.ModelSerializer):
+    """
+    Test instance serializer class.
+
+    * Only for read purposes.
+    """
+    owner = UserSerializer(read_only=True)
+    questions = QuestionGetSerializer(many=True, read_only=True)
+    questions_feedback = QuestionGetSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Test
+        fields = ('id', 'name', 'description', 'date_creation', 'owner', 'questions', 'questions_feedback')
