@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 
 from django.contrib.auth.models import User
 
-from quiez.rest_api.serializers.auth import UserSerializerRegistration
+from quiez.rest_api.serializers.auth import UserSerializer
 
 
 class Registration(GenericAPIView):
@@ -13,7 +13,7 @@ class Registration(GenericAPIView):
     Registration view.
     """
     permission_classes = (AllowAny, )
-    serializer_class = UserSerializerRegistration
+    serializer_class = UserSerializer
 
     def post(self, request):
         """
@@ -22,7 +22,7 @@ class Registration(GenericAPIView):
         * New user must pass data according to serializer_class to register in service.
         * Email will be used as username.
         """
-        serializer = UserSerializerRegistration(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             str_username = serializer.validated_data["email"]
             serializer.validated_data["username"] = str_username
