@@ -1,59 +1,33 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 
 from ..models.question import Question
+from .answer import QuestionAnswerPostSerializer
 
 
-class QuestionDetailedSerializer(serializers.ModelSerializer):
+class QuestionPostSerializer(serializers.ModelSerializer):
     """
-    Question instance serializer. Detailed description.
+    Question instance serializer class.
+
+    * Only for creation purposes.
     """
+    answers = QuestionAnswerPostSerializer(many=True)
+
     class Meta:
         model = Question
-        fields = ('id', 'description', 'answers', 'right_answers', 'weight')
+        fields = ('description', 'type', 'answers')
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict):
         """
         Creates instance of Question class from validated json.
 
         :param validated_data: validated json.
-        :return: Question class instance.
+        :return: Question model instance.
         """
-        answers = validated_data.get('answers')
-        right_answers = validated_data.get('right_answers')
-
-        # check content of answers field
-        for answer in answers:
-            if answer is not None:
-                pass
-            else:
-                raise ParseError("Answer must not be empty.")
-
-        # check content of right answers field
-        for right_answer in right_answers:
-            if right_answer is not None:
-                pass
-            else:
-                raise ParseError("Answer must not be empty.")
-
-        # check correspondence of answers and right_answers fields
-        if len(right_answers) == 1:
-            if len(answers) == 0:                       # question with 1 free answer
-                pass
-            else:                                       # question with 1 answer
-                if right_answers[0] in answers: # answers list contains right one
-                    pass
-                else:
-                    raise ParseError("List of answers does not contain right one.")
-        elif len(right_answers) >= 1:
-            if len(answers) == 0:                       # question with several free answer
-                pass
-            else:                                       # question with several answers
-                for right_answer in right_answers:
-                    if right_answer in answers: # answers list contains all right answers
-                        pass
-                    else:
-                        raise ParseError("List of answers does not contain some of right answers.")
-
-        question = Question.objects.get_or_create(**validated_data)
+        answers_data = validated_data.pop('answers')
+        question = Question.objects.create(**validated_data)
+        for answer_data in answers_data:
+            serializer = QuestionAnswerPostSerializer(data=answer_data)
+            if serializer.is_valid():
+                serializer.validated_data['question'] = question
+                serializer.create(validated_data=serializer.validated_data)
         return question
