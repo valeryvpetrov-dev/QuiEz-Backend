@@ -58,3 +58,14 @@ class QuestionAnswerSubmission(AbstractAnswerSubmission):
     answer = models.ForeignKey(QuestionAnswer, on_delete=models.CASCADE, null=False,
                                related_name='+')
     is_right = models.BooleanField(null=False)  # flag that indicates if answer is right
+
+
+class QuestionFeedbackAnswerSubmission(AbstractAnswerSubmission):
+    """
+    Feedback question answer model class.
+        - Extends AbstractAnswerSubmission model.
+    """
+    question = models.ForeignKey(QuestionFeedback, on_delete=models.CASCADE, null=False,
+                                 related_name='+')
+    answer = models.ForeignKey(QuestionFeedbackAnswer, on_delete=models.CASCADE, null=False,
+                               related_name='+')
