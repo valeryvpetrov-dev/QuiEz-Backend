@@ -6,7 +6,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from .views.auth import Registration
-from .views.test import TestList, TestDetail
+from .views.test import TestList, TestDetail, TestSubmission
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -33,4 +33,5 @@ urlpatterns = [
     # test
     path('test', TestList.as_view()),
     path('test/<int:test_id>', TestDetail.as_view()),
+    path('test/<int:test_id>/submit', TestSubmission.as_view()),
 ]
