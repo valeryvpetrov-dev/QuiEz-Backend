@@ -1,6 +1,7 @@
 from django.db import models
 
 from .question import Question, QuestionFeedback
+from .test import TestSubmission
 
 
 class AbstractAnswer(models.Model):
@@ -30,4 +31,18 @@ class QuestionFeedbackAnswer(AbstractAnswer):
         - Extends AbstractAnswer model with QuestionFeedback relation.
     """
     content = models.CharField(max_length=100, null=True)   # null for free answer question
-    question_feedback = models.ForeignKey(QuestionFeedback, on_delete=models.CASCADE, null=False, related_name="answers")
+    question_feedback = models.ForeignKey(QuestionFeedback, on_delete=models.CASCADE, null=False,
+                                          related_name="answers")
+
+
+class AbstractAnswerSubmission(AbstractAnswer):
+    """
+    Abstract answer submission model class.
+        - Should be used as parent of all answer submission models.
+    """
+    test_submission = models.ForeignKey(TestSubmission, on_delete=models.CASCADE, null=False,
+                                        related_name='+')
+    content = models.CharField(max_length=100, null=False)
+
+    class Meta:
+        abstract = True
