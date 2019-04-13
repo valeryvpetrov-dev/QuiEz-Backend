@@ -46,3 +46,15 @@ class AbstractAnswerSubmission(AbstractAnswer):
 
     class Meta:
         abstract = True
+
+
+class QuestionAnswerSubmission(AbstractAnswerSubmission):
+    """
+    Question answer model class.
+        - Extends AbstractAnswerSubmission model.
+    """
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False,
+                                 related_name='+')
+    answer = models.ForeignKey(QuestionAnswer, on_delete=models.CASCADE, null=False,
+                               related_name='+')
+    is_right = models.BooleanField(null=False)  # flag that indicates if answer is right
