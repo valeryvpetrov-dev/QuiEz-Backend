@@ -29,7 +29,7 @@ def _bind_answers(question_feedback, list_str_answers: list) -> None:
     :return:
     """
     for str_answer in list_str_answers:
-        QuestionFeedbackAnswer.objects.create(question_feedback=question_feedback, content=str_answer, is_right=True)
+        QuestionFeedbackAnswer.objects.create(question_feedback=question_feedback, content=str_answer)
 
 
 def _generate_feedback_questions() -> None:

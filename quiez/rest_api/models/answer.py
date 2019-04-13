@@ -9,7 +9,6 @@ class AbstractAnswer(models.Model):
         - Should be used as parent of all answer models.
     """
     id = models.AutoField(primary_key=True)
-    is_right = models.BooleanField(null=False)
 
     class Meta:
         abstract = True
@@ -22,6 +21,7 @@ class QuestionAnswer(AbstractAnswer):
     """
     content = models.CharField(max_length=100, null=False)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False, related_name="answers")
+    is_right = models.BooleanField(null=False)
 
 
 class QuestionFeedbackAnswer(AbstractAnswer):
