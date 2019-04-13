@@ -30,3 +30,20 @@ class Test(models.Model):
                 question_feedback.save()
         except QuestionFeedback.DoesNotExist:
             pass
+
+
+class TestSubmission(models.Model):
+    """
+    Passed test model class.
+    """
+    id = models.AutoField(primary_key=True)
+    date_submission = models.DateTimeField(null=False)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, null=False, related_name="test")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user")
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            if not self.date_submission:  # automatically fill date_submission when save instance
+                self.date_submission = localtime()
+
+        super().save(*args, **kwargs)
