@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from ..serializers.test import TestPostSerializer, TestGetSerializer
+from ..serializers.test import TestPostSerializer, TestGetSerializer, TestSubmissionPostSerializer
 from ..models.test import Test
 
 
@@ -56,3 +56,32 @@ class TestDetail(GenericAPIView):
         test = get_object_or_404(Test, pk=test_id)
         serializer = TestGetSerializer(test)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TestSubmission(GenericAPIView):
+    """
+    Test submission view class.
+
+    post:
+    Submit test.
+    """
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    serializer_class = TestSubmissionPostSerializer
+
+    def post(self, request, test_id):
+        """
+        Creates test submission instance using passed JSON from request body.
+
+        :param request: test submission initiator.
+        :param test_id: source test to submit.
+        :return: HTTP response with id of created test submission instance.
+        """
+        request.data['test_id'] = test_id
+        request.data['user_id'] = request.user.id
+        serializer = TestSubmissionPostSerializer(data=request.data)
+        if serializer.is_valid():
+            test_submission = serializer.create(validated_data=serializer.validated_data)
+            return Response({"test_submission_id": test_submission.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
