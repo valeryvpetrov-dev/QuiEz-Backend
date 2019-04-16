@@ -9,6 +9,8 @@ class Test(models.Model):
     """
     id = models.AutoField(primary_key=True)
     date_creation = models.DateTimeField(null=False)
+    date_open = models.DateTimeField(null=True)
+    date_close = models.DateTimeField(null=True)
     name = models.CharField(max_length=150, null=True)
     description = models.CharField(max_length=250, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="tests")
