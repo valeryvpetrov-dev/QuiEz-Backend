@@ -96,3 +96,33 @@ class TestSubmission(GenericAPIView):
                 test_submission = serializer.create(validated_data=serializer.validated_data)
                 return Response({"test_submission_id": test_submission.id}, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestSubmissionOpen(GenericAPIView):
+    """
+    Open test submission view class.
+
+    post:
+    Open submission.
+    """
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get_serializer_class(self):
+        pass
+
+    def post(self, request, test_id):
+        """
+        Opens test submission.
+
+        :param request: test submission open initiator.
+        :param test_id: test id to open.
+        :return: HTTP response with operation result code.
+        """
+        test = get_object_or_404(Test, pk=test_id)
+        if test.date_open is None:
+            test.date_open = localtime()
+            test.save()
+            return Response({"details": "Test is ready for submission now."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"details": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
