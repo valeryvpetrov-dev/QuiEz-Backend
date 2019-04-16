@@ -126,3 +126,36 @@ class TestSubmissionOpen(GenericAPIView):
             return Response({"details": "Test is ready for submission now."}, status=status.HTTP_200_OK)
         else:
             return Response({"details": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestSubmissionClose(GenericAPIView):
+    """
+    Close test submission view class.
+
+    post:
+    Close submission.
+    """
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get_serializer_class(self):
+        pass
+
+    def post(self, request, test_id):
+        """
+        Closes test submission.
+
+        :param request: test submission close initiator.
+        :param test_id: test id to open.
+        :return: HTTP response with operation result code.
+        """
+        test = get_object_or_404(Test, pk=test_id)
+        if test.date_open is None:
+            return Response({"details": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if test.date_close is None:
+                test.date_close = localtime()
+                test.save()
+                return Response({"details": "Test submission is closed now."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"details": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
