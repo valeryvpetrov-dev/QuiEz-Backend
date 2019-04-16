@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from ..serializers.test import TestPostSerializer, TestGetSerializer, TestSubmissionPostSerializer
 from ..models.test import Test
 
+from django.utils.timezone import localtime
+
 
 class TestList(GenericAPIView):
     """
@@ -77,11 +79,20 @@ class TestSubmission(GenericAPIView):
         :param test_id: source test to submit.
         :return: HTTP response with id of created test submission instance.
         """
-        request.data['test_id'] = test_id
-        request.data['user_id'] = request.user.id
-        serializer = TestSubmissionPostSerializer(data=request.data)
-        if serializer.is_valid():
-            test_submission = serializer.create(validated_data=serializer.validated_data)
-            return Response({"test_submission_id": test_submission.id}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        test = get_object_or_404(Test, pk=test_id)
+        # check if test is opened for submission
+        if test.date_open is None:
+            return Response({"detail": "Test is not open for submission."}, status=status.HTTP_400_BAD_REQUEST)
+        if test.date_open > localtime():
+            return Response({"detail": "Test open date is in future."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # check if test is not closed for submission
+        if test.date_close is not None:
+            return Response({"detail": "Test is closed for submission."}, status=status.HTTP_410_GONE)
+        else:
+            request.data['test_id'] = test_id
+            request.data['user_id'] = request.user.id
+            serializer = TestSubmissionPostSerializer(data=request.data)
+            if serializer.is_valid():
+                test_submission = serializer.create(validated_data=serializer.validated_data)
+                return Response({"test_submission_id": test_submission.id}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
