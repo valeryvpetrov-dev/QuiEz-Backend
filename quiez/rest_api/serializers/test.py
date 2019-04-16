@@ -48,7 +48,8 @@ class TestGetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Test
-        fields = ('id', 'name', 'description', 'date_creation', 'owner', 'questions', 'questions_feedback')
+        fields = ('id', 'name', 'description', 'date_creation', 'date_open', 'date_close',
+                  'owner', 'questions', 'questions_feedback')
 
 
 class TestSubmissionPostSerializer(serializers.ModelSerializer):
