@@ -27,6 +27,7 @@ class TestPostSerializer(serializers.ModelSerializer):
         :return: Test model instance.
         """
         questions_data = validated_data.pop('questions')
+        validated_data['questions_number'] = len(questions_data)
         test = Test.objects.create(**validated_data)
         for question_data in questions_data:
             serializer = QuestionPostSerializer(data=question_data)
@@ -112,7 +113,6 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                 'id': int(question_id),
                 'answers': []
             }
-
             for answer in answers:
                 answer_id = answer.get('id')
                 content = answer.get('content')
@@ -170,7 +170,7 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                     'content': content,
                 }
                 validated_data_question_feedback['answers'].insert(0, validated_data_answer_feedback)
-            validated_data_test['questions'].insert(0, validated_data_question_feedback)
+            validated_data_test['questions_feedback'].insert(0, validated_data_question_feedback)
         return validated_data_test
 
     def create(self, validated_data):
@@ -182,8 +182,12 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
         """
         questions_data = validated_data.pop('questions')
         questions_feedback_data = validated_data.pop('questions_feedback')
+
         test_submission = TestSubmission.objects.create(**validated_data)
+        int_answers_right = 0
+
         for question_data in questions_data:
+            bool_answer_right = True
             answers_data = question_data.pop('answers')
             for answer_data in answers_data:
                 answer_data['test_submission'] = test_submission.id
@@ -191,7 +195,14 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                 answer_data['answer'] = answer_data.pop('id')
                 serializer_answer_submission = QuestionAnswerSubmissionPostSerializer(data=answer_data)
                 if serializer_answer_submission.is_valid():
+                    if not serializer_answer_submission.validated_data['is_right']:
+                        bool_answer_right = False
                     serializer_answer_submission.create(validated_data=serializer_answer_submission.validated_data)
+            if bool_answer_right:
+                int_answers_right += 1
+        test_submission.right_answers_number = int_answers_right
+        test_submission.save()
+
         for question_feedback_data in questions_feedback_data:
             answers_data = question_feedback_data.pop('answers')
             for answer_data in answers_data:
