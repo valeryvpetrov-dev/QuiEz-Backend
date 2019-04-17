@@ -217,6 +217,110 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
         return test_submission
 
 
+class TestResultOverviewGetSerializer(serializers.Serializer):
+    """
+    Test result overview serializer class.
+
+    * Only for read purposes.
+    """
+    def to_representation(self, test):
+        """
+        Converts Test and TestSubmission instances to JSON.
+
+        :param test: Test model instance.
+        :return: JSON of test instance.
+        """
+        serializer_test = TestGetSerializer(test)
+        dict_test_result = serializer_test.data
+        # questions number
+        dict_test_result['questions_number'] = test.questions_number
+        # participants number
+        dict_test_result['participants_number'] = TestSubmission.objects.filter(test__id=test.id).count()
+        # question answers overview
+        for test_submission in TestSubmission.objects.filter(test__id=test.id):
+            for dict_question in dict_test_result['questions']:
+                dict_question['answers_number'] = 0
+                dict_question['right_answers_number'] = 0
+
+                if QuestionAnswerSubmission.objects \
+                        .filter(test_submission__id=test_submission.id,
+                                question__id=dict_question['id'])\
+                        .exists():
+                    dict_question['answers_number'] += 1
+                if QuestionAnswerSubmission.objects. \
+                        filter(test_submission__id=test_submission.id,
+                               question__id=dict_question['id'],
+                               is_right=True)\
+                        .exists():
+                    dict_question['right_answers_number'] += 1
+                for dict_answer in dict_question['answers']:
+                    if dict_question['type'] == "text":
+                        answer_text_submission = QuestionAnswerSubmission.objects \
+                            .get(test_submission__id=test_submission.id, question__id=dict_question['id'])
+                        if len(dict_question['answers']) == 1 and \
+                                dict_question['answers'][0].get('choices_number', None) is None:
+                            dict_question['answers'].clear()
+                        if len(dict_question['answers']) == 0 or \
+                                answer_text_submission['content'] not in \
+                                list(map(lambda _dict_answer: _dict_answer.get('content', None),
+                                         dict_question['answers'])):
+                            dict_question['answers'].append({
+                                "id": dict_answer['id'],
+                                "content": answer_text_submission.content,
+                                "is_right": answer_text_submission.is_right,
+                                "choices_number": QuestionAnswerSubmission.objects \
+                                    .filter(test_submission_id=test_submission.id,
+                                            question__id=dict_question['id'],
+                                            content=answer_text_submission.content) \
+                                    .count()
+                            })
+                    else:
+                        dict_answer['choices_number'] = dict_answer.get('choices_number', 0) + \
+                                                        QuestionAnswerSubmission.objects \
+                                                            .filter(test_submission__id=test_submission.id,
+                                                                    question__id=dict_question['id'],
+                                                                    answer__id=dict_answer['id']) \
+                                                            .count()
+
+            # feedback question answers overview
+            for dict_question in dict_test_result['questions_feedback']:
+                dict_question['answers_number'] = 0
+
+                if QuestionFeedbackAnswerSubmission.objects \
+                        .filter(test_submission__id=test_submission.id,
+                                question__id=dict_question['id'])\
+                        .exists:
+                    dict_question['answers_number'] += 1
+                for dict_answer in dict_question['answers']:
+                    if dict_question['type'] == "text":
+                        answer_text_submission = QuestionFeedbackAnswerSubmission.objects \
+                            .get(test_submission__id=test_submission.id, question__id=dict_question['id'])
+                        if len(dict_question['answers']) == 1 and \
+                                dict_question['answers'][0].get('choices_number', None) is None:
+                            dict_question['answers'].clear()
+                        if len(dict_question['answers']) == 0 or \
+                                answer_text_submission['content'] not in \
+                                list(map(lambda _dict_answer: _dict_answer['content'], dict_question['answers'])):
+                            dict_question['answers'].append({
+                                "id": dict_answer['id'],
+                                "content": answer_text_submission.content,
+                                "choices_number": QuestionFeedbackAnswerSubmission.objects \
+                                    .filter(test_submission_id=test_submission.id,
+                                            question__id=dict_question['id'],
+                                            content=answer_text_submission.content) \
+                                    .count()
+                            })
+                    else:
+                        dict_answer['choices_number'] = dict_answer.get('choices_number', 0) + \
+                                                        QuestionFeedbackAnswerSubmission.objects \
+                                                            .filter(test_submission__id=test_submission.id,
+                                                                    question__id=dict_question['id'],
+                                                                    answer__id=dict_answer['id']) \
+                                                            .count()
+
+        return dict_test_result
+
+
 class UserTestResultGetSerializer(serializers.Serializer):
     """
     Test result overview serializer class.
