@@ -8,7 +8,7 @@ from drf_yasg import openapi
 from .views.auth import Registration
 from .views.test import TestList, TestDetail, TestSubmission, \
     TestSubmissionOpen, TestSubmissionClose, \
-    UserTestResult
+    TestResultOverview, UserTestResult
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -38,5 +38,6 @@ urlpatterns = [
     path('test/<int:test_id>/open', TestSubmissionOpen.as_view()),
     path('test/<int:test_id>/close', TestSubmissionClose.as_view()),
     path('test/<int:test_id>/submit', TestSubmission.as_view()),
+    path('test/<int:test_id>/result', TestResultOverview.as_view()),
     path('test/<int:test_id>/result/<int:user_id>', UserTestResult.as_view()),
 ]
