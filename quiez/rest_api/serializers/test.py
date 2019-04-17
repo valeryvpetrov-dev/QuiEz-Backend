@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from ..models.test import Test, TestSubmission
+from ..models.answer import QuestionAnswerSubmission, QuestionFeedbackAnswerSubmission
+
 from .question import QuestionPostSerializer, QuestionGetSerializer, \
     QuestionFeedbackGetSerializer
 from .answer import QuestionAnswerSubmissionPostSerializer, QuestionFeedbackAnswerSubmissionPostSerializer
@@ -213,3 +215,49 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                 if serializer_answer_submission.is_valid():
                     serializer_answer_submission.create(validated_data=serializer_answer_submission.validated_data)
         return test_submission
+
+
+class UserTestResultGetSerializer(serializers.Serializer):
+    """
+    Test result overview serializer class.
+
+    * Only for read purposes.
+    """
+    def to_representation(self, test, test_submission):
+        """
+        Converts Test and TestSubmission instances to JSON.
+
+        :param test: Test model instance.
+        :param test_submission: TestSubmission model instance.
+        :return: JSON of test instance.
+        """
+        serializer_test = TestGetSerializer(test)
+        json_test_result = serializer_test.data
+        # participant info
+        json_test_result['participant'] = UserSerializer(test_submission.user).data
+        # questions, right answers number
+        json_test_result['questions_number'] = test.questions_number
+        json_test_result['right_answers_number'] = test_submission.right_answers_number
+        # participant answers
+        for json_question in json_test_result['questions']:
+            answer_submissions = QuestionAnswerSubmission.objects.filter(test_submission__id=test_submission.id,
+                                                                         question__id=json_question['id'])
+            json_question['participant_answers'] = []
+            for answer_submission in answer_submissions:
+                json_question['participant_answers'].append({
+                    "id": answer_submission.answer.id,
+                    "content": answer_submission.content,
+                    "is_right": answer_submission.is_right
+                })
+        # participant feedback answers
+        for json_question in json_test_result['questions_feedback']:
+            answer_submissions = QuestionFeedbackAnswerSubmission.objects.filter(test_submission__id=test_submission.id,
+                                                                                 question__id=json_question['id'])
+            json_question['participant_answers'] = []
+            for answer_submission in answer_submissions:
+                json_question['participant_answers'].append({
+                    "id": answer_submission.answer.id,
+                    "content": answer_submission.content,
+                })
+
+        return json_test_result
