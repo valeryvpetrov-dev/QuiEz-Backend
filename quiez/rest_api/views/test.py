@@ -125,12 +125,16 @@ class TestSubmissionOpen(GenericAPIView):
         :return: HTTP response with operation result code.
         """
         test = get_object_or_404(Test, pk=test_id)
-        if test.date_open is None:
-            test.date_open = localtime()
-            test.save()
-            return Response({"details": "Test is ready for submission now."}, status=status.HTTP_200_OK)
+        if test.owner == request.user:
+            if test.date_open is None:
+                test.date_open = localtime()
+                test.save()
+                return Response({"details": "Test is ready for submission now."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"details": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"details": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"details": "You are not owner of this test to open it."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class TestSubmissionClose(GenericAPIView):
@@ -155,12 +159,16 @@ class TestSubmissionClose(GenericAPIView):
         :return: HTTP response with operation result code.
         """
         test = get_object_or_404(Test, pk=test_id)
-        if test.date_open is None:
-            return Response({"details": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            if test.date_close is None:
-                test.date_close = localtime()
-                test.save()
-                return Response({"details": "Test submission is closed now."}, status=status.HTTP_200_OK)
+        if test.owner == request.user:
+            if test.date_open is None:
+                return Response({"details": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"details": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+                if test.date_close is None:
+                    test.date_close = localtime()
+                    test.save()
+                    return Response({"details": "Test submission is closed now."}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"details": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"details": "You are not owner of this test to close it."},
+                            status=status.HTTP_400_BAD_REQUEST)
