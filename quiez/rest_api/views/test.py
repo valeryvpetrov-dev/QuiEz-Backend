@@ -178,6 +178,37 @@ class TestSubmissionClose(GenericAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+class TestResultOverview(GenericAPIView):
+    """
+    Test result view class.
+
+    get:
+    Get test result overview.
+    """
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
+    serializer_class = TestResultOverviewGetSerializer
+
+    def get(self, request, test_id):
+        """
+        Returns test result overview.
+
+        :param request: get test result overview initiator.
+        :param test_id: id of test to get result.
+        :return: HTTP response with test overview JSON.
+        """
+        test = get_object_or_404(Test, pk=test_id)
+        # check if test is opened
+        if test.date_open is None:
+            return Response({"details": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
+        # check if test is closed to get result
+        if test.date_close is None:
+            return Response({"details": "Test is not closed. You can not get result until it is closed."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = TestResultOverviewGetSerializer()
+        return Response(serializer.to_representation(test), status=status.HTTP_200_OK)
+
+
 class UserTestResult(GenericAPIView):
     """
     User test result view class.
