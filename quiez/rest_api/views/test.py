@@ -4,7 +4,11 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from ..serializers.test import TestPostSerializer, TestGetSerializer, TestSubmissionPostSerializer
+from django.contrib.auth.models import User
+
+from ..serializers.test import TestPostSerializer, TestGetSerializer, \
+    TestSubmissionPostSerializer, \
+    TestResultOverviewGetSerializer, UserTestResultGetSerializer
 from ..models.test import Test
 from ..models.test import TestSubmission as TestSubmissionModel
 
@@ -172,3 +176,37 @@ class TestSubmissionClose(GenericAPIView):
         else:
             return Response({"details": "You are not owner of this test to close it."},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserTestResult(GenericAPIView):
+    """
+    User test result view class.
+
+    get:
+    Get user test result.
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserTestResultGetSerializer
+
+    def get(self, request, test_id, user_id):
+        """
+        Returns test result overview of particular user.
+
+        :param request: get test result overview initiator.
+        :param test_id: id of test to get result.
+        :param user_id: user who submitted test.
+        :return: HTTP response with test overview JSON.
+        """
+        test = get_object_or_404(Test, pk=test_id)
+        user = get_object_or_404(User, pk=user_id)
+        # check if test is opened
+        if test.date_open is None:
+            return Response({"details": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
+        # check if test is closed to get result
+        if test.date_close is None:
+            return Response({"details": "Test is not closed. You can not get result until it is closed."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        test_submission = TestSubmissionModel.objects.get(test__id=test.id, user__id=user_id)
+        serializer = UserTestResultGetSerializer()
+        return Response(serializer.to_representation(test, test_submission), status=status.HTTP_200_OK)
