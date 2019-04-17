@@ -8,6 +8,7 @@ class Test(models.Model):
     Test model class.
     """
     id = models.AutoField(primary_key=True)
+    questions_number = models.IntegerField(null=False)
     date_creation = models.DateTimeField(null=False)
     date_open = models.DateTimeField(null=True)
     date_close = models.DateTimeField(null=True)
@@ -39,6 +40,7 @@ class TestSubmission(models.Model):
     Passed test model class.
     """
     id = models.AutoField(primary_key=True)
+    right_answers_number = models.IntegerField(null=True)
     date_submission = models.DateTimeField(null=False)
     test = models.ForeignKey(Test, on_delete=models.CASCADE, null=False, related_name="test")
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user")
