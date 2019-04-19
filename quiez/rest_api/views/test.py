@@ -24,8 +24,8 @@ class TestList(GenericAPIView):
     post:
     Create test instance.
     """
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -38,8 +38,8 @@ class TestList(GenericAPIView):
         """
         Reads lists of all test instances.
         """
-        list_tests = Test.objects.all()
-        serializer = TestGetConciseSerializer(list_tests, many=True)
+        queryset_tests = Test.objects.all()
+        serializer = TestGetConciseSerializer(queryset_tests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -81,8 +81,8 @@ class TestSubmission(GenericAPIView):
     post:
     Submit test.
     """
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = TestSubmissionPostSerializer
 
     def post(self, request, test_id):
@@ -96,7 +96,8 @@ class TestSubmission(GenericAPIView):
             if test.date_open is None:
                 return Response({"detail": "Test is not open for submission."}, status=status.HTTP_400_BAD_REQUEST)
             if test.date_open > localtime():
-                return Response({"detail": "Test open date is in future."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"detail": "Test open date is in future."},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             # check if test is not closed for submission
             if test.date_close is not None:
                 return Response({"detail": "Test is closed for submission."}, status=status.HTTP_410_GONE)
@@ -119,8 +120,8 @@ class TestSubmissionOpen(GenericAPIView):
     post:
     Open submission.
     """
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         pass
@@ -149,8 +150,8 @@ class TestSubmissionClose(GenericAPIView):
     post:
     Close submission.
     """
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         pass
@@ -182,8 +183,8 @@ class TestResultOverview(GenericAPIView):
     get:
     Get test result overview.
     """
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAuthenticated, )
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = TestResultOverviewGetSerializer
 
     def get(self, request, test_id):
@@ -229,3 +230,31 @@ class UserTestResult(GenericAPIView):
         test_submission = TestSubmissionModel.objects.get(test__id=test.id, user__id=user_id)
         serializer = UserTestResultGetSerializer()
         return Response(serializer.to_representation(test, test_submission), status=status.HTTP_200_OK)
+
+
+class UserTestSubmissionList(GenericAPIView):
+    """
+    User test submission view class.
+
+    get:
+    Read list of all tests submitted by user.
+    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TestGetConciseSerializer
+        return None
+
+    def get(self, request, user_id):
+        """
+        Reads lists of all test instances submitted by user.
+        """
+        list_user_submitted_tests_ids = list(TestSubmissionModel.objects \
+                                             .filter(user_id=user_id) \
+                                             .distinct("test_id") \
+                                             .values_list("test_id", flat=True))
+        queryset_user_submitted_tests = Test.objects.filter(id__in=list_user_submitted_tests_ids)
+        serializer = TestGetConciseSerializer(queryset_user_submitted_tests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
