@@ -5,26 +5,42 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
+from django.utils.timezone import localtime
 
-from ..serializers.test import TestPostSerializer, TestGetSerializer, \
+from ..serializers.test import TestPostSerializer, TestGetSerializer, TestGetConciseSerializer, \
     TestSubmissionPostSerializer, \
     TestResultOverviewGetSerializer, UserTestResultGetSerializer
 from ..models.test import Test
 from ..models.test import TestSubmission as TestSubmissionModel
-
-from django.utils.timezone import localtime
 
 
 class TestList(GenericAPIView):
     """
     Test view class.
 
+    get:
+    Read list of all tests.
+
     post:
     Create test instance.
     """
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
-    serializer_class = TestPostSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TestGetConciseSerializer
+        if self.request.method == 'POST':
+            return TestPostSerializer
+        return None
+
+    def get(self, request):
+        """
+        Reads lists of all test instances.
+        """
+        list_tests = Test.objects.all()
+        serializer = TestGetConciseSerializer(list_tests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         """
