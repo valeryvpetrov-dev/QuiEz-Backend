@@ -55,6 +55,20 @@ class TestGetSerializer(serializers.ModelSerializer):
                   'owner', 'questions', 'questions_feedback')
 
 
+class TestGetConciseSerializer(serializers.ModelSerializer):
+    """
+    Test instance serializer class.
+        - Concise description.
+
+    * Only for read purposes.
+    """
+    owner = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Test
+        fields = ('id', 'name', 'description', 'date_creation', 'date_open', 'date_close', 'owner')
+
+
 class TestSubmissionPostSerializer(serializers.ModelSerializer):
     """
     Test submission instance serializer class.
