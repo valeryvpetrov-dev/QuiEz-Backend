@@ -45,9 +45,6 @@ class TestList(GenericAPIView):
     def post(self, request):
         """
         Creates test instance using passed JSON from request body.
-
-        :param request: test creation initiator.
-        :return: HTTP response with id of created test instance.
         """
         serializer = TestPostSerializer(data=request.data)
         if serializer.is_valid():
@@ -71,10 +68,6 @@ class TestDetail(GenericAPIView):
     def get(self, request, test_id: int):
         """
         Reads test instance by id.
-
-        :param request: test read initiator.
-        :param test_id: test instance id.
-        :return: HTTP response with serialized test instance.
         """
         test = get_object_or_404(Test, pk=test_id)
         serializer = TestGetSerializer(test)
@@ -95,10 +88,6 @@ class TestSubmission(GenericAPIView):
     def post(self, request, test_id):
         """
         Creates test submission instance using passed JSON from request body.
-
-        :param request: test submission initiator.
-        :param test_id: source test to submit.
-        :return: HTTP response with id of created test submission instance.
         """
         test = get_object_or_404(Test, pk=test_id)
         # if test has not been submitted yet
@@ -139,10 +128,6 @@ class TestSubmissionOpen(GenericAPIView):
     def post(self, request, test_id):
         """
         Opens test submission.
-
-        :param request: test submission open initiator.
-        :param test_id: test id to open.
-        :return: HTTP response with operation result code.
         """
         test = get_object_or_404(Test, pk=test_id)
         if test.owner == request.user:
@@ -173,10 +158,6 @@ class TestSubmissionClose(GenericAPIView):
     def post(self, request, test_id):
         """
         Closes test submission.
-
-        :param request: test submission close initiator.
-        :param test_id: test id to open.
-        :return: HTTP response with operation result code.
         """
         test = get_object_or_404(Test, pk=test_id)
         if test.owner == request.user:
@@ -208,10 +189,6 @@ class TestResultOverview(GenericAPIView):
     def get(self, request, test_id):
         """
         Returns test result overview.
-
-        :param request: get test result overview initiator.
-        :param test_id: id of test to get result.
-        :return: HTTP response with test overview JSON.
         """
         test = get_object_or_404(Test, pk=test_id)
         # check if test is opened
@@ -239,11 +216,6 @@ class UserTestResult(GenericAPIView):
     def get(self, request, test_id, user_id):
         """
         Returns test result overview of particular user.
-
-        :param request: get test result overview initiator.
-        :param test_id: id of test to get result.
-        :param user_id: user who submitted test.
-        :return: HTTP response with test overview JSON.
         """
         test = get_object_or_404(Test, pk=test_id)
         user = get_object_or_404(User, pk=user_id)

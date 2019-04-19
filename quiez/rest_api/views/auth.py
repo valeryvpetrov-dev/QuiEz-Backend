@@ -18,8 +18,6 @@ class Registration(GenericAPIView):
     def post(self, request):
         """
         Registration function for new users.
-
-        * New user must pass data according to serializer_class to register in service.
         * Email will be used as username.
         """
         serializer = UserSerializer(data=request.data)
