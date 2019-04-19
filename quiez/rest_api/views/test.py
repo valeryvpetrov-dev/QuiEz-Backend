@@ -37,7 +37,7 @@ class TestList(GenericAPIView):
         if serializer.is_valid():
             serializer.validated_data['owner'] = request.user
             test = serializer.create(validated_data=serializer.validated_data)
-            return Response({"test_id": test.id}, status=status.HTTP_201_CREATED)
+            return Response({"id": test.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -101,7 +101,7 @@ class TestSubmission(GenericAPIView):
                 serializer = TestSubmissionPostSerializer(data=request.data)
                 if serializer.is_valid():
                     test_submission = serializer.create(validated_data=serializer.validated_data)
-                    return Response({"test_submission_id": test_submission.id}, status=status.HTTP_201_CREATED)
+                    return Response({"id": test_submission.id}, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "Test has been already submitted."}, status=status.HTTP_400_BAD_REQUEST)
@@ -133,11 +133,11 @@ class TestSubmissionOpen(GenericAPIView):
             if test.date_open is None:
                 test.date_open = localtime()
                 test.save()
-                return Response({"details": "Test is ready for submission now."}, status=status.HTTP_200_OK)
+                return Response({"detail": "Test is ready for submission now."}, status=status.HTTP_200_OK)
             else:
-                return Response({"details": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Test is already opened."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"details": "You are not owner of this test to open it."},
+            return Response({"detail": "You are not owner of this test to open it."},
                             status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -165,16 +165,16 @@ class TestSubmissionClose(GenericAPIView):
         test = get_object_or_404(Test, pk=test_id)
         if test.owner == request.user:
             if test.date_open is None:
-                return Response({"details": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 if test.date_close is None:
                     test.date_close = localtime()
                     test.save()
-                    return Response({"details": "Test submission is closed now."}, status=status.HTTP_200_OK)
+                    return Response({"detail": "Test submission is closed now."}, status=status.HTTP_200_OK)
                 else:
-                    return Response({"details": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"detail": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"details": "You are not owner of this test to close it."},
+            return Response({"detail": "You are not owner of this test to close it."},
                             status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -200,10 +200,10 @@ class TestResultOverview(GenericAPIView):
         test = get_object_or_404(Test, pk=test_id)
         # check if test is opened
         if test.date_open is None:
-            return Response({"details": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
         # check if test is closed to get result
         if test.date_close is None:
-            return Response({"details": "Test is not closed. You can not get result until it is closed."},
+            return Response({"detail": "Test is not closed. You can not get result until it is closed."},
                             status=status.HTTP_400_BAD_REQUEST)
         serializer = TestResultOverviewGetSerializer()
         return Response(serializer.to_representation(test), status=status.HTTP_200_OK)
@@ -233,10 +233,10 @@ class UserTestResult(GenericAPIView):
         user = get_object_or_404(User, pk=user_id)
         # check if test is opened
         if test.date_open is None:
-            return Response({"details": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Test is not opened."}, status=status.HTTP_400_BAD_REQUEST)
         # check if test is closed to get result
         if test.date_close is None:
-            return Response({"details": "Test is not closed. You can not get result until it is closed."},
+            return Response({"detail": "Test is not closed. You can not get result until it is closed."},
                             status=status.HTTP_400_BAD_REQUEST)
         test_submission = TestSubmissionModel.objects.get(test__id=test.id, user__id=user_id)
         serializer = UserTestResultGetSerializer()

@@ -28,7 +28,7 @@ class Registration(GenericAPIView):
             serializer.validated_data["username"] = str_username
             try:
                 user = User.objects.get(username=str_username)
-                return Response({'error': 'User with given email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail': 'User with given email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
             except User.DoesNotExist:
                 User.objects.create_user(**serializer.validated_data)
                 return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
