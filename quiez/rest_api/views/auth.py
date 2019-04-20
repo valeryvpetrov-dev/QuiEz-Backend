@@ -8,9 +8,9 @@ from django.contrib.auth.models import User
 from quiez.rest_api.serializers.auth import UserSerializer
 
 
-class Registration(GenericAPIView):
+class UserRegistrationView(GenericAPIView):
     """
-    Registration view.
+    User registration view.
     """
     permission_classes = (AllowAny, )
     serializer_class = UserSerializer

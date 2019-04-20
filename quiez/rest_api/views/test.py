@@ -14,7 +14,7 @@ from ..models.test import Test
 from ..models.test import TestSubmission as TestSubmissionModel
 
 
-class TestList(GenericAPIView):
+class TestListView(GenericAPIView):
     """
     Test view class.
 
@@ -54,7 +54,7 @@ class TestList(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestDetail(GenericAPIView):
+class TestDetailView(GenericAPIView):
     """
     Test view class.
 
@@ -74,7 +74,7 @@ class TestDetail(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TestSubmission(GenericAPIView):
+class TestSubmissionView(GenericAPIView):
     """
     Test submission view class.
 
@@ -113,7 +113,7 @@ class TestSubmission(GenericAPIView):
             return Response({"detail": "Test has been already submitted."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestSubmissionOpen(GenericAPIView):
+class TestSubmissionOpenView(GenericAPIView):
     """
     Open test submission view class.
 
@@ -143,7 +143,7 @@ class TestSubmissionOpen(GenericAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestSubmissionClose(GenericAPIView):
+class TestSubmissionCloseView(GenericAPIView):
     """
     Close test submission view class.
 
@@ -176,7 +176,7 @@ class TestSubmissionClose(GenericAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestResultOverview(GenericAPIView):
+class TestResultOverviewView(GenericAPIView):
     """
     Test result view class.
 
@@ -203,7 +203,7 @@ class TestResultOverview(GenericAPIView):
         return Response(serializer.to_representation(test), status=status.HTTP_200_OK)
 
 
-class UserTestResult(GenericAPIView):
+class UserTestResultView(GenericAPIView):
     """
     User test result view class.
 
@@ -232,7 +232,7 @@ class UserTestResult(GenericAPIView):
         return Response(serializer.to_representation(test, test_submission), status=status.HTTP_200_OK)
 
 
-class UserTestSubmissionList(GenericAPIView):
+class UserTestSubmissionListView(GenericAPIView):
     """
     User test submission view class.
 

@@ -5,11 +5,11 @@ from rest_framework.permissions import AllowAny
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views.auth import Registration
-from .views.test import TestList, TestDetail, TestSubmission, \
-    TestSubmissionOpen, TestSubmissionClose, \
-    TestResultOverview, UserTestResult, \
-    UserTestSubmissionList
+from .views.auth import UserRegistrationView
+from .views.test import TestListView, TestDetailView, TestSubmissionView, \
+    TestSubmissionOpenView, TestSubmissionCloseView, \
+    TestResultOverviewView, UserTestResultView, \
+    UserTestSubmissionListView
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -31,15 +31,15 @@ urlpatterns = [
     # authorization stuff provided by rest_auth
     path('auth/', include('rest_auth.urls')),
     # registration
-    path('auth/register/', Registration.as_view()),
+    path('auth/register/', UserRegistrationView.as_view()),
 
     # test
-    path('test', TestList.as_view()),
-    path('test/<int:test_id>', TestDetail.as_view()),
-    path('test/<int:test_id>/open', TestSubmissionOpen.as_view()),
-    path('test/<int:test_id>/close', TestSubmissionClose.as_view()),
-    path('test/<int:test_id>/submit', TestSubmission.as_view()),
-    path('test/<int:test_id>/result', TestResultOverview.as_view()),
-    path('test/<int:test_id>/result/<int:user_id>', UserTestResult.as_view()),
-    path('test/submission/<int:user_id>', UserTestSubmissionList.as_view()),
+    path('test', TestListView.as_view()),
+    path('test/<int:test_id>', TestDetailView.as_view()),
+    path('test/<int:test_id>/open', TestSubmissionOpenView.as_view()),
+    path('test/<int:test_id>/close', TestSubmissionCloseView.as_view()),
+    path('test/<int:test_id>/submit', TestSubmissionView.as_view()),
+    path('test/<int:test_id>/result', TestResultOverviewView.as_view()),
+    path('test/<int:test_id>/result/<int:user_id>', UserTestResultView.as_view()),
+    path('test/submission/<int:user_id>', UserTestSubmissionListView.as_view()),
 ]
