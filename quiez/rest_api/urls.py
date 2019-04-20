@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views.auth import UserRegistrationView
+from .views.auth import UserRegistrationView, UserDetailsView
 from .views.test import TestListView, TestDetailView, TestSubmissionView, \
     TestSubmissionOpenView, TestSubmissionCloseView, \
     TestResultOverviewView, UserTestResultView, \
@@ -30,6 +30,8 @@ urlpatterns = [
     path('auth-rest/', include('rest_framework.urls', namespace='rest_framework')),
     # authorization stuff provided by rest_auth
     path('auth/', include('rest_auth.urls')),
+    # override rest_auth /user view
+    path('auth/user', UserDetailsView.as_view()),
     # registration
     path('auth/register/', UserRegistrationView.as_view()),
 
