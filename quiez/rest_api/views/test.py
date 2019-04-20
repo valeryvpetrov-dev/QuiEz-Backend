@@ -91,26 +91,29 @@ class TestSubmissionView(GenericAPIView):
         """
         test = get_object_or_404(Test, pk=test_id)
         # if test has not been submitted yet
-        if not TestSubmissionModel.objects.filter(test__id=test.id, user__id=request.user.id):
-            # check if test is opened for submission
-            if test.date_open is None:
-                return Response({"detail": "Test is not open for submission."}, status=status.HTTP_400_BAD_REQUEST)
-            if test.date_open > localtime():
-                return Response({"detail": "Test open date is in future."},
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            # check if test is not closed for submission
-            if test.date_close is not None:
-                return Response({"detail": "Test is closed for submission."}, status=status.HTTP_410_GONE)
+        if test.owner != request.user:
+            if not TestSubmissionModel.objects.filter(test__id=test.id, user__id=request.user.id):
+                # check if test is opened for submission
+                if test.date_open is None:
+                    return Response({"detail": "Test is not open for submission."}, status=status.HTTP_400_BAD_REQUEST)
+                if test.date_open > localtime():
+                    return Response({"detail": "Test open date is in future."},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # check if test is not closed for submission
+                if test.date_close is not None:
+                    return Response({"detail": "Test is closed for submission."}, status=status.HTTP_410_GONE)
+                else:
+                    request.data['test_id'] = test_id
+                    request.data['user_id'] = request.user.id
+                    serializer = TestSubmissionPostSerializer(data=request.data)
+                    if serializer.is_valid():
+                        test_submission = serializer.create(validated_data=serializer.validated_data)
+                        return Response({"id": test_submission.id}, status=status.HTTP_201_CREATED)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                request.data['test_id'] = test_id
-                request.data['user_id'] = request.user.id
-                serializer = TestSubmissionPostSerializer(data=request.data)
-                if serializer.is_valid():
-                    test_submission = serializer.create(validated_data=serializer.validated_data)
-                    return Response({"id": test_submission.id}, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Test has been already submitted."}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"detail": "Test has been already submitted."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Owner can not submit his test."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TestSubmissionOpenView(GenericAPIView):
