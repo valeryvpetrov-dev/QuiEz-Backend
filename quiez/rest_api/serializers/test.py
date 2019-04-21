@@ -292,8 +292,14 @@ class TestResultOverviewGetSerializer(serializers.Serializer):
         # question answers overview
         for test_submission in TestSubmission.objects.filter(test__id=test.id):
             for dict_question in dict_test_result['questions']:
-                dict_question['answers_number'] = 0
-                dict_question['right_answers_number'] = 0
+                try:
+                    dict_question['answers_number']
+                except KeyError:
+                    dict_question['answers_number'] = 0
+                try:
+                    dict_question['right_answers_number']
+                except KeyError:
+                    dict_question['right_answers_number'] = 0
 
                 if QuestionAnswerSubmission.objects \
                         .filter(test_submission__id=test_submission.id,
@@ -314,7 +320,7 @@ class TestResultOverviewGetSerializer(serializers.Serializer):
                                 dict_question['answers'][0].get('choices_number', None) is None:
                             dict_question['answers'].clear()
                         if len(dict_question['answers']) == 0 or \
-                                answer_text_submission['content'] not in \
+                                answer_text_submission.content not in \
                                 list(map(lambda _dict_answer: _dict_answer.get('content', None),
                                          dict_question['answers'])):
                             dict_question['answers'].append({
@@ -337,7 +343,10 @@ class TestResultOverviewGetSerializer(serializers.Serializer):
 
             # feedback question answers overview
             for dict_question in dict_test_result['questions_feedback']:
-                dict_question['answers_number'] = 0
+                try:
+                    dict_question['answers_number']
+                except KeyError:
+                    dict_question['answers_number'] = 0
 
                 if QuestionFeedbackAnswerSubmission.objects \
                         .filter(test_submission__id=test_submission.id,
@@ -352,7 +361,7 @@ class TestResultOverviewGetSerializer(serializers.Serializer):
                                 dict_question['answers'][0].get('choices_number', None) is None:
                             dict_question['answers'].clear()
                         if len(dict_question['answers']) == 0 or \
-                                answer_text_submission['content'] not in \
+                                answer_text_submission.content not in \
                                 list(map(lambda _dict_answer: _dict_answer['content'], dict_question['answers'])):
                             dict_question['answers'].append({
                                 "id": dict_answer['id'],
