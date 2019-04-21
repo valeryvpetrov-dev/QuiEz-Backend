@@ -34,30 +34,30 @@ def _bind_answers(question_feedback, list_str_answers: list) -> None:
 
 def _generate_feedback_questions() -> None:
     data = {
-        "description": "Do you like it?",
+        "description": "Вам понравилось?",
         "type": "one",
     }
     list_str_answers = [
-        "Yes, I do.",
-        "No, I don't."
+        "Да.",
+        "Нет."
     ]
     tuple_question_like = QuestionFeedback.objects.get_or_create(**data)
     if tuple_question_like[1]:
         _bind_answers(tuple_question_like[0], list_str_answers)
 
-    data['description'] = "Select good points about action."
+    data['description'] = "Выберите качества, характеризующие выступающего."
     data['type'] = "many"
     list_str_answers = [
-        "Humor",
-        "Competence",
-        "Oratory",
-        "Interaction with audience"
+        "Юмор",
+        "Компетенция",
+        "Красноречие",
+        "Взаимодействие с аудиторией"
     ]
     tuple_question_good_points = QuestionFeedback.objects.get_or_create(**data)
     if tuple_question_good_points[1]:
         _bind_answers(tuple_question_good_points[0], list_str_answers)
 
-    data['description'] = "Describe your impression about all in one word."
+    data['description'] = "Опишите ваше впечатление в одним словом."
     data['type'] = "text"
     list_str_answers = [
         ""
