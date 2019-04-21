@@ -254,10 +254,9 @@ class UserTestSubmissionListView(GenericAPIView):
         """
         Reads lists of all test instances submitted by user.
         """
-        list_user_submitted_tests_ids = list(TestSubmissionModel.objects \
+        set_user_submitted_tests_ids = set(TestSubmissionModel.objects \
                                              .filter(user_id=user_id) \
-                                             .distinct("test_id") \
                                              .values_list("test_id", flat=True))
-        queryset_user_submitted_tests = Test.objects.filter(id__in=list_user_submitted_tests_ids)
+        queryset_user_submitted_tests = Test.objects.filter(id__in=set_user_submitted_tests_ids)
         serializer = TestGetConciseSerializer(queryset_user_submitted_tests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
