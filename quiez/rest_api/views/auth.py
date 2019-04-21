@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+from rest_auth.views import UserDetailsView as RestAuthUserDetailsView
+
 from django.contrib.auth.models import User
 
 from quiez.rest_api.serializers.auth import UserSerializer
@@ -35,7 +37,7 @@ class UserRegistrationView(GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetailsView(GenericAPIView):
+class UserDetailsView(RestAuthUserDetailsView):
     """
     User details view.
     """
@@ -43,7 +45,7 @@ class UserDetailsView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         """
         Reads the user's details.
         """

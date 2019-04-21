@@ -28,10 +28,10 @@ urlpatterns = [
 
     # browsable API autharization
     path('auth-rest/', include('rest_framework.urls', namespace='rest_framework')),
+    # override rest_auth /user view
+    path('auth/user/', UserDetailsView.as_view()),
     # authorization stuff provided by rest_auth
     path('auth/', include('rest_auth.urls')),
-    # override rest_auth /user view
-    path('auth/user', UserDetailsView.as_view()),
     # registration
     path('auth/register/', UserRegistrationView.as_view()),
 
