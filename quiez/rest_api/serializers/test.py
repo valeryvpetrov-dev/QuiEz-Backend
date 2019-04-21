@@ -186,7 +186,10 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                     'id': 'Feedback question id field is required.'
                 })
             else:
-                if not QuestionFeedback.objects.filter(id__exact=int(question_id), test_id=test_id).exists():
+
+                if not QuestionFeedback.tests.through.objects\
+                        .filter(questionfeedback_id=int(question_id), test_id=test_id)\
+                        .exists():
                     raise serializers.ValidationError({
                         'question_id': 'There is not feedback question with id = {}'.format(question_id)
                     })
@@ -207,7 +210,9 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                         'id': 'Answer id field is required.'
                     })
                 else:
-                    if not QuestionFeedbackAnswer.objects.filter(id__exact=int(answer_id), question_id=question_id).exists():
+                    if not QuestionFeedbackAnswer.objects\
+                            .filter(id__exact=int(answer_id), question_feedback_id=question_id)\
+                            .exists():
                         raise serializers.ValidationError({
                             'answer_id': 'There is not answer with id = {}'.format(answer_id)
                         })
