@@ -36,12 +36,12 @@ urlpatterns = [
     path('auth/register/', UserRegistrationView.as_view()),
 
     # test
-    path('test', TestListView.as_view()),
-    path('test/<int:test_id>', TestDetailView.as_view()),
-    path('test/<int:test_id>/open', TestSubmissionOpenView.as_view()),
-    path('test/<int:test_id>/close', TestSubmissionCloseView.as_view()),
-    path('test/<int:test_id>/submit', TestSubmissionView.as_view()),
-    path('test/<int:test_id>/result', TestResultOverviewView.as_view()),
-    path('test/<int:test_id>/result/<int:user_id>', UserTestResultView.as_view()),
-    path('test/submission/<int:user_id>', UserTestSubmissionListView.as_view()),
+    path('test/', TestListView.as_view()),
+    path('test/<int:test_id>/', TestDetailView.as_view()),
+    path('test/<int:test_id>/open/', TestSubmissionOpenView.as_view()),
+    path('test/<int:test_id>/close/', TestSubmissionCloseView.as_view()),
+    path('test/<int:test_id>/submit/', TestSubmissionView.as_view()),
+    path('test/<int:test_id>/result/', TestResultOverviewView.as_view()),
+    path('test/<int:test_id>/result/<int:user_id>/', UserTestResultView.as_view()),
+    path('test/submission/<int:user_id>/', UserTestSubmissionListView.as_view()),
 ]
