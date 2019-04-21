@@ -1,7 +1,11 @@
+from django.contrib.auth.models import User
+
 from rest_framework import serializers
 
 from ..models.test import Test, TestSubmission
-from ..models.answer import QuestionAnswerSubmission, QuestionFeedbackAnswerSubmission
+from ..models.question import Question, QuestionFeedback
+from ..models.answer import QuestionAnswer, QuestionFeedbackAnswer,\
+    QuestionAnswerSubmission, QuestionFeedbackAnswerSubmission
 
 from .question import QuestionPostSerializer, QuestionGetSerializer, \
     QuestionFeedbackGetSerializer
@@ -94,10 +98,20 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'test_id': 'Test id field is required.'
             })
+        else:
+            if not Test.objects.filter(id__exact=int(test_id)).exists():
+                raise serializers.ValidationError({
+                    'test_id': 'There is not test with id = {}'.format(test_id)
+                })
         if not user_id:
             raise serializers.ValidationError({
                 'user_id': 'User id field is required.'
             })
+        else:
+            if not User.objects.filter(id__exact=int(user_id)).exists():
+                raise serializers.ValidationError({
+                    'user_id': 'There is not user with id = {}'.format(user_id)
+                })
         if not questions:
             raise serializers.ValidationError({
                 'questions': 'Questions list field is required.'
@@ -121,6 +135,11 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'id': 'Question id field is required.'
                 })
+            else:
+                if not Question.objects.filter(id__exact=int(question_id), test_id=test_id).exists():
+                    raise serializers.ValidationError({
+                        'question_id': 'There is not question with id = {}'.format(question_id)
+                    })
             if not answers:
                 raise serializers.ValidationError({
                     'answers': 'Answers list field is required.'
@@ -137,6 +156,11 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({
                         'id': 'Answer id field is required.'
                     })
+                else:
+                    if not QuestionAnswer.objects.filter(id__exact=int(answer_id), question_id=question_id).exists():
+                        raise serializers.ValidationError({
+                            'answer_id': 'There is not answer with id = {}'.format(answer_id)
+                        })
                 if not content:
                     raise serializers.ValidationError({
                         'content': 'Content field is required.'
@@ -161,6 +185,11 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'id': 'Feedback question id field is required.'
                 })
+            else:
+                if not QuestionFeedback.objects.filter(id__exact=int(question_id), test_id=test_id).exists():
+                    raise serializers.ValidationError({
+                        'question_id': 'There is not feedback question with id = {}'.format(question_id)
+                    })
             if not answers:
                 raise serializers.ValidationError({
                     'answers': 'Feedback answers list field is required.'
@@ -177,6 +206,11 @@ class TestSubmissionPostSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({
                         'id': 'Answer id field is required.'
                     })
+                else:
+                    if not QuestionFeedbackAnswer.objects.filter(id__exact=int(answer_id), question_id=question_id).exists():
+                        raise serializers.ValidationError({
+                            'answer_id': 'There is not answer with id = {}'.format(answer_id)
+                        })
                 if not content:
                     raise serializers.ValidationError({
                         'content': 'Content field is required.'
