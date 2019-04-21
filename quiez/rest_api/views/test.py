@@ -39,8 +39,11 @@ class TestListView(GenericAPIView):
         """
         Reads lists of all test instances.
         """
-        queryset_tests = Test.objects.all()
-        serializer = TestGetConciseSerializer(queryset_tests, many=True)
+        set_user_submitted_tests_ids = set(TestSubmissionModel.objects \
+                                           .filter(user_id=request.user.id) \
+                                           .values_list("test_id", flat=True))
+        queryset_user_unsubmitted_tests = Test.objects.exclude(id__in=set_user_submitted_tests_ids)
+        serializer = TestGetConciseSerializer(queryset_user_unsubmitted_tests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -250,8 +253,8 @@ class UserTestSubmissionListView(GenericAPIView):
         Reads lists of all test instances submitted by user.
         """
         set_user_submitted_tests_ids = set(TestSubmissionModel.objects \
-                                             .filter(user_id=user_id) \
-                                             .values_list("test_id", flat=True))
+                                           .filter(user_id=user_id) \
+                                           .values_list("test_id", flat=True))
         queryset_user_submitted_tests = Test.objects.filter(id__in=set_user_submitted_tests_ids)
         serializer = TestGetConciseSerializer(queryset_user_submitted_tests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
