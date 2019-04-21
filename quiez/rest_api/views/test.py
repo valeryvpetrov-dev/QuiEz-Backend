@@ -1,4 +1,5 @@
 from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
@@ -116,7 +117,7 @@ class TestSubmissionView(GenericAPIView):
             return Response({"detail": "Owner can not submit his test."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestSubmissionOpenView(GenericAPIView):
+class TestSubmissionOpenView(APIView):
     """
     Open test submission view class.
 
@@ -125,9 +126,6 @@ class TestSubmissionOpenView(GenericAPIView):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):
-        pass
 
     def post(self, request, test_id):
         """
@@ -146,7 +144,7 @@ class TestSubmissionOpenView(GenericAPIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestSubmissionCloseView(GenericAPIView):
+class TestSubmissionCloseView(APIView):
     """
     Close test submission view class.
 
@@ -155,9 +153,6 @@ class TestSubmissionCloseView(GenericAPIView):
     """
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):
-        pass
 
     def post(self, request, test_id):
         """
