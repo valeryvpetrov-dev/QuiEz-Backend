@@ -13,6 +13,7 @@ class AbstractAnswer(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['id']  # sorted by id ascending (old first)
 
 
 class QuestionAnswer(AbstractAnswer):

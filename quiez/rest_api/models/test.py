@@ -16,6 +16,9 @@ class Test(models.Model):
     description = models.CharField(max_length=250, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="tests")
 
+    class Meta:
+        ordering = ['-id']      # sorted by id descending (new first)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             if not self.date_creation:  # automatically fill date_creation when save instance
@@ -44,6 +47,9 @@ class TestSubmission(models.Model):
     date_submission = models.DateTimeField(null=False)
     test = models.ForeignKey(Test, on_delete=models.CASCADE, null=False, related_name="test")
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name="user")
+
+    class Meta:
+        ordering = ['-id']      # sorted by id descending (new first)
 
     def save(self, *args, **kwargs):
         if not self.pk:
