@@ -38,8 +38,8 @@ def _generate_feedback_questions() -> None:
         "type": "one",
     }
     list_str_answers = [
-        "Да.",
-        "Нет."
+        "Да",
+        "Нет"
     ]
     tuple_question_like = QuestionFeedback.objects.get_or_create(**data)
     if tuple_question_like[1]:
@@ -57,10 +57,15 @@ def _generate_feedback_questions() -> None:
     if tuple_question_good_points[1]:
         _bind_answers(tuple_question_good_points[0], list_str_answers)
 
-    data['description'] = "Опишите ваше впечатление в одним словом."
-    data['type'] = "text"
+    data['description'] = "Ваши впечатления?"
+    data['type'] = "many"
     list_str_answers = [
-        ""
+        "Занимательно",
+        "Скучно",
+        "Информативно",
+        "Неинформативно",
+        "Непонятно",
+        "Доходчиво",
     ]
     tuple_question_general_impression = QuestionFeedback.objects.get_or_create(**data)
     if tuple_question_general_impression[1]:

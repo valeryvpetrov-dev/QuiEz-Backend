@@ -30,8 +30,8 @@ class Test(models.Model):
         from .question import QuestionFeedback
 
         try:
-            _qs_questions_feedback = QuestionFeedback.objects.all()
-            for question_feedback in _qs_questions_feedback:
+            queryset_questions_feedback = QuestionFeedback.objects.all()
+            for question_feedback in queryset_questions_feedback:
                 self.questions_feedback.add(question_feedback)
                 question_feedback.save()
         except QuestionFeedback.DoesNotExist:
