@@ -166,12 +166,18 @@ class TestSubmissionCloseView(APIView):
             if test.date_open is None:
                 return Response({"detail": "Test is not even opened to be closed."}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                if test.date_close is None:
-                    test.date_close = localtime()
-                    test.save()
-                    return Response({"detail": "Test submission is closed now."}, status=status.HTTP_200_OK)
+                if TestSubmissionModel.objects\
+                        .filter(test_id=test_id)\
+                        .exists():
+                    if test.date_close is None:
+                        test.date_close = localtime()
+                        test.save()
+                        return Response({"detail": "Test submission is closed now."}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({"detail": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({"detail": "Test is already closed."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"detail": "There is no submissions of this test."},
+                                    status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"detail": "You are not owner of this test to close it."},
                             status=status.HTTP_400_BAD_REQUEST)
