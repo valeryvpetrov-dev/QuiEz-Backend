@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'quiez.rest_api',
-    'rest_framework_swagger'
+    'drf_yasg',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'quiez.quiez.urls'
@@ -76,16 +78,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'quiez.wsgi.application'
+WSGI_APPLICATION = 'quiez.quiez.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config()
+    'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/quiez-backend-rest-api')
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -173,3 +174,6 @@ LOGGING = {
 
 # Configure Django App for Heroku.
 django_heroku.settings(locals())
+
+# enable Cross-Origin Resource Sharing for any domain
+CORS_ORIGIN_ALLOW_ALL = True

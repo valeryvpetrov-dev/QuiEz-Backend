@@ -132,5 +132,9 @@ cmake-build-*/
 
 # backup copies
 *~
+
 # environment file with django settings
 .env
+
+# database migrations
+**/migrations

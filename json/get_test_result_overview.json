@@ -1,0 +1,148 @@
+{
+  "id": 6,
+  "name": "test",
+  "description": "test",
+  "date_creation": "2019-04-17T09:18:59.615830Z",
+  "date_open": "2019-04-17T09:19:49.159022Z",
+  "date_close": "2019-04-17T09:50:37.604599Z",
+  "owner": {
+    "id": 1,
+    "first_name": "test",
+    "last_name": "test",
+    "email": "test@test.com"
+  },
+  "questions": [
+    {
+      "id": 15,
+      "description": "q3",
+      "type": "text",
+      "answers": [
+        {
+          "id": 35,
+          "content": "q3-a1",
+          "is_right": true,
+          "choices_number": 1
+        }
+      ],
+      "answers_number": 1,
+      "right_answers_number": 1
+    },
+    {
+      "id": 14,
+      "description": "q2",
+      "type": "many",
+      "answers": [
+        {
+          "id": 32,
+          "content": "q2-a1",
+          "is_right": true,
+          "choices_number": 1
+        },
+        {
+          "id": 33,
+          "content": "q2-a2",
+          "is_right": true,
+          "choices_number": 0
+        },
+        {
+          "id": 34,
+          "content": "q2-a3",
+          "is_right": false,
+          "choices_number": 1
+        }
+      ],
+      "answers_number": 1,
+      "right_answers_number": 0
+    },
+    {
+      "id": 13,
+      "description": "q1",
+      "type": "one",
+      "answers": [
+        {
+          "id": 29,
+          "content": "q1-a1",
+          "is_right": true,
+          "choices_number": 1
+        },
+        {
+          "id": 30,
+          "content": "q1-a2",
+          "is_right": false,
+          "choices_number": 0
+        },
+        {
+          "id": 31,
+          "content": "q1-a3",
+          "is_right": false,
+          "choices_number": 0
+        }
+      ],
+      "answers_number": 1,
+      "right_answers_number": 1
+    }
+  ],
+  "questions_feedback": [
+    {
+      "id": 4,
+      "description": "Do you like it?",
+      "type": "one",
+      "answers": [
+        {
+          "id": 6,
+          "content": "Yes, I do.",
+          "choices_number": 1
+        },
+        {
+          "id": 7,
+          "content": "No, I don't.",
+          "choices_number": 0
+        }
+      ],
+      "answers_number": 1
+    },
+    {
+      "id": 5,
+      "description": "Select good points about action.",
+      "type": "many",
+      "answers": [
+        {
+          "id": 8,
+          "content": "Humor",
+          "choices_number": 1
+        },
+        {
+          "id": 9,
+          "content": "Competence",
+          "choices_number": 1
+        },
+        {
+          "id": 10,
+          "content": "Oratory",
+          "choices_number": 0
+        },
+        {
+          "id": 11,
+          "content": "Interaction with audience",
+          "choices_number": 0
+        }
+      ],
+      "answers_number": 1
+    },
+    {
+      "id": 6,
+      "description": "Describe your impression about all in one word.",
+      "type": "text",
+      "answers": [
+        {
+          "id": 12,
+          "content": "hello, world",
+          "choices_number": 1
+        }
+      ],
+      "answers_number": 1
+    }
+  ],
+  "questions_number": 3,
+  "participants_number": 1
+}

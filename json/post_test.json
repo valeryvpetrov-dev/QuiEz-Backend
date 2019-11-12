@@ -1,0 +1,52 @@
+{
+  "name": "test",
+  "description": "test",
+  "questions": [
+    {
+      "description": "q1",
+      "type": "one",
+      "answers": [
+        {
+          "content": "q1-a1",
+          "is_right": true
+        },
+        {
+          "content": "q1-a2",
+          "is_right": false
+        },
+        {
+          "content": "q1-a3",
+          "is_right": false
+        }
+      ]
+    },
+    {
+      "description": "q2",
+      "type": "many",
+      "answers": [
+        {
+          "content": "q2-a1",
+          "is_right": true
+        },
+        {
+          "content": "q2-a2",
+          "is_right": true
+        },
+        {
+          "content": "q2-a3",
+          "is_right": false
+        }
+      ]
+    },
+    {
+      "description": "q3",
+      "type": "text",
+      "answers": [
+        {
+          "content": "q3-a1",
+          "is_right": true
+        }
+      ]
+    }
+  ]
+}
